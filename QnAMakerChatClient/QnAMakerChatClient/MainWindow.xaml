@@ -1,0 +1,77 @@
+﻿<Window x:Class="QnAMakerChatClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QnAMakerChatClient"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.DataContext>
+        <local:ViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <local:ListBoxItemStyleSelector x:Key="styleSelector"/>
+        <Style TargetType="ListBoxItem" x:Key="sendItemStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style>
+        <Style TargetType="ListBoxItem" x:Key="receiveItemStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+        </Style>
+        <local:ChatItemTemplateSelector x:Key="itemTemplateSelector" />
+        <DataTemplate x:Key="sendTemplate">
+            <StackPanel Margin="50,0,5,0">
+                <TextBlock FontSize="12" Foreground="Gray" HorizontalAlignment="Right" 
+                           Text="{Binding Path=From}"/>
+                <Border Background="LightGreen">
+                    <TextBlock Margin="10" TextWrapping="WrapWithOverflow" 
+                               Text="{Binding Path=Message}"/>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="receiveTemplate">
+            <StackPanel Margin="5,0,50,0">
+                <TextBlock FontSize="12" Foreground="Gray" HorizontalAlignment="Left" 
+                           Text="{Binding Path=From}"/>
+                <Border Background="LightBlue">
+                    <TextBlock Margin="10" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=Message}"/>
+                </Border>
+                <TextBlock FontSize="12" Foreground="Gray" HorizontalAlignment="Right">
+                    <Run Text="Score : " />
+                    <Run Text="{Binding Path=Score,StringFormat={}{0:N2}}" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListBox Grid.ColumnSpan="2" Name="chatList" Margin="5,0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 Focusable="False" 
+                 ItemTemplateSelector="{StaticResource itemTemplateSelector}"
+                 ItemContainerStyleSelector="{StaticResource styleSelector}"
+                 ItemsSource="{Binding Path=ChatItems}"
+                 />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <RadioButton Name="female" Content="女" GroupName="gender"
+                         IsChecked="True" />
+            <RadioButton Name="male" Content="男" GroupName="gender" 
+                         IsChecked="{Binding Male,UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        <DockPanel Grid.Column="1" Grid.Row="1" LastChildFill="True" Margin="5,0">
+            <Button DockPanel.Dock="Right" Content="送信" Command="{Binding Path=SendCommand}"/>
+            <TextBox DockPanel.Dock="Left" AcceptsReturn="True"
+                     HorizontalScrollBarVisibility="Auto" 
+                     Text="{Binding Path=Question,UpdateSourceTrigger=PropertyChanged}"
+                     />
+        </DockPanel>
+    </Grid>
+</Window>
